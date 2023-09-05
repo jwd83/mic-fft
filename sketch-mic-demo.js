@@ -1,5 +1,5 @@
 let mic, fft;
-
+const bins = 16384;
 function setup() {
     createCanvas(1024, 600);
     noFill();
@@ -8,7 +8,7 @@ function setup() {
     mic.start();
     getAudioContext().resume();
 
-    fft = new p5.FFT();
+    fft = new p5.FFT(0, bins);
     fft.setInput(mic);
 }
 
@@ -29,7 +29,7 @@ function draw() {
 
     beginShape();
     for (i = 0; i < spectrum.length; i++) {
-        vertex(i, map(spectrum[i], 0, 255, height, 0));
+        vertex(i / 16, map(spectrum[i], 0, 255, height, 0));
         if (spectrum[i] > spectrum_peak) {
             spectrum_peak = spectrum[i];
             spectrum_peak_index = i;
@@ -37,7 +37,7 @@ function draw() {
     }
     endShape();
 
-    spectrum_peak_frequency = spectrum_peak_index * 24000 / 1024;
+    spectrum_peak_frequency = spectrum_peak_index * 24000 / bins;
 
     // peak_energy = 0;
     // peak_frequency = 0;
@@ -72,6 +72,7 @@ function draw() {
         let x = map(i, 0, waveform.length, 0, width);
         let y = map(waveform[i], -1, 1, 0, height);
         vertex(x, y);
+
     }
     endShape();
 
